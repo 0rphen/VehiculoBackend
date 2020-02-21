@@ -1,0 +1,10 @@
+var mongoose = require('mongoose');
+
+var vehiculoSchema = mongoose.Schema({
+    userId: {type: Number, required: [true, 'id necesario']},
+    id: {type: Number, required: true},
+    title: {type: String, required: false},
+    completed: {type: Boolean, required: true}
+});
+
+module.exports = mongoose.model('Vehiculo', vehiculoSchema);
