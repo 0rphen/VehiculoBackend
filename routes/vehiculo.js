@@ -13,12 +13,12 @@ app.get('/', (req, res)=>{
     	    });
     	return res.status(200).json({
     	    ok: true,
-    	    mensaje: "TODO OK"
+    	    body: vehiculos
     	});
     });
 });
 
-app.post('/', (res, req)=>{
+app.post('/', (req, res)=>{
     var body = req.body;
     var vehiculo = new Vehiculo({
 	userId: body.userId,
@@ -39,7 +39,7 @@ app.post('/', (res, req)=>{
     });
 });
 
-app.put('/:id', (res, req)=>{
+app.put('/:id', (req, res)=>{
     var userId = req.params.id;
     var body = req.body;
     Vehiculo.findById(userId, (err, vehiculo) =>{
