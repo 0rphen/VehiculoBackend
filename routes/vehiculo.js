@@ -21,10 +21,11 @@ app.get('/', (req, res)=>{
 app.post('/', (req, res)=>{
     var body = req.body;
     var vehiculo = new Vehiculo({
-	userId: body.userId,
-	id: body.id,
-	title: body.title,
-	completed: body.completed
+	vehiculoId: body.vehiculoId,
+	model: body.model,
+	active: body.active,
+	color: body.color,
+	modelYear: body.modelYear
     });
     vehiculo.save((err, vehiculoSave) => {
 	if (err)
@@ -48,10 +49,11 @@ app.put('/:id', (req, res)=>{
 		ok: false,
 		mensaje: 'Error cargando vehiculo'
 	    });
-	vehiculo.userId = body.userId;
-	vehiculo.id = body.id;
-	vehiculo.title = body.title;
-	vehiculo.completed = body.completed;
+	vehiculo.vehiculoId = body.vehiculoId;
+	vehiculo.model = body.model;
+	vehiculo.active = body.active;
+	vehiculo.color = body.color;
+	vehiculo.modelYear = body.modelYear;
 	vehiculo.save((err, vehiculoSave) => {
 	    if (err)
 		return res.status(400).json({
