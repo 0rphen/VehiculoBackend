@@ -1,41 +1,35 @@
 var express = require('express');
+var VehiculoConsumer = require('../mongoConsumes/vehiculoConsumer');
 var app = express();
 
-var Vehiculo = require('../models/vehiculo');
+var vehiculoConsumer = new VehiculoConsumer();
 
 app.get('/', (req, res)=>{
-    Vehiculo.find({}, (err, vehiculos)=>{
-    	if (err)
-    	    return res.status(500).json({
-    		ok: false,
-    		mensaje: 'Error cargando Vehiculos',
-    		errors: err
-    	    });
-    	return res.status(200).json({
+    vehiculoConsumer.get().then(vehiculos => {
+	return res.status(200).json({
     	    ok: true,
     	    body: vehiculos
+    	});
+    }).catch(err=>{
+	return res.status(500).json({
+    	    ok: false,
+    	    mensaje: 'Error cargando Vehiculos',
+    	    errors: err
     	});
     });
 });
 
 app.post('/', (req, res)=>{
     var body = req.body;
-    var vehiculo = new Vehiculo({
-	vehiculoId: body.vehiculoId,
-	model: body.model,
-	active: body.active,
-	color: body.color,
-	modelYear: body.modelYear
-    });
-    vehiculo.save((err, vehiculoSave) => {
-	if (err)
-	    return err.status(400).json({
-		ok: false,
-		mensaje: 'Error al crear vehiculo'
-	    });
+    vehiculoConsumer.post(body).then(vehiculoSave => {
 	return res.status(201).json({
 	    ok: true,
 	    vehiculo: vehiculoSave
+	});
+    }).catch(err=>{
+	return err.status(400).json({
+	    ok: false,
+	    mensaje: 'Error al crear vehiculo'
 	});
     });
 });
@@ -43,43 +37,30 @@ app.post('/', (req, res)=>{
 app.put('/:id', (req, res)=>{
     var userId = req.params.id;
     var body = req.body;
-    Vehiculo.findById(userId, (err, vehiculo) =>{
-	if (err)
-	    return res.status(500).json({
-		ok: false,
-		mensaje: 'Error cargando vehiculo'
-	    });
-	vehiculo.vehiculoId = body.vehiculoId;
-	vehiculo.model = body.model;
-	vehiculo.active = body.active;
-	vehiculo.color = body.color;
-	vehiculo.modelYear = body.modelYear;
-	vehiculo.save((err, vehiculoSave) => {
-	    if (err)
-		return res.status(400).json({
-		    ok: false,
-		    mensaje: 'Error al actualizar vehiculo'
-		});
-	    return res.status(200).json({
-		ok: true,
-		vehiculo: vehiculoSave
-	    });
+    vehiculoConsumer.put(body, userId).then(vehiculoSave=>{
+	return res.status(200).json({
+	    ok: true,
+	    vehiculo: vehiculoSave
+	});	
+    }).catch(err=>{
+	return res.status(500).json({
+	    ok: false,
+	    mensaje: 'Error actualizando vehiculo'
 	});
-	return true;
-  });
+    });
 });
 
 app.delete('/:id', (req, res)=>{
     var id = req.params.id;
-    Vehiculo.findByIdAndRemove(id, (err, vehiculoDelete) => {
-	if (err)
-	    return res.status(400).json({
-		ok: false,
-		mensaje: 'Error al eliminar vehiculo'
-	    });
+    vehiculoConsumer.delete(id).then(vehiculoDelete=>{
 	return res.status(200).json({
 	    ok: true,
 	    vehiculo: vehiculoDelete
+	});	
+    }).catch(err=>{
+	return res.status(400).json({
+	    ok: false,
+	    mensaje: 'Error al eliminar vehiculo'
 	});
     });
 });

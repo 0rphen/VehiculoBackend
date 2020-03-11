@@ -1,9 +1,0 @@
-var express = require('express');
-var https = require('https');
-var app = express();
-
-app.get('/', (req, res)=>{
-    https.get('jsonplaceholder.typicode.com', (res)=>{
-	console.log(res);
-    });
-});
