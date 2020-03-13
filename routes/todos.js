@@ -1,31 +1,20 @@
 var express = require('express');
 var https = require('https');
-var Request = require("request");
+var request = require("request-promise");
 var app = express();
 
 app.get('/', (req, res)=>{
-    let data = new Promise(
-	function(resolve, reject) {
-	    Request.get("http://jsonplaceholder.typicode.com/todos", (error, response, body) => {
-		if(error) {
-		    reject(error);
-		}
-		body = JSON.parse(body);
-		resolve(body.filter(element => element.completed == true));
+    try {
+	request("http://jsonplaceholder.typicode.com/todos")
+	    .then((body)=>{
+		return res.status(200).send(body);
+	    })
+	    .catch((err)=>{
+		return res.status(500).send(err);
 	    });
-	}
-    );
-    data.then((body)=>{
-	return res.status(201).json({
-	    ok: true,
-	    data: body
-	});
-    }).catch((err)=>{
-	return res.status(500).json({
-	    ok:false,
-	    message: err
-	});
-    });
+    } catch(err) {
+	return res.status(500).send(err);
+    }
 });
 
 module.exports = app;

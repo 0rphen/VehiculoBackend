@@ -6,15 +6,7 @@ module.exports = class VehiculoConsumer {
     constructor() { }
 
     get() {
-        return new Promise(
-            function(resolve, reject) {
-                Vehiculo.find({}, (err, vehiculos) => {
-                    if (err)
-                        reject(err);
-                    resolve(vehiculos);
-                });
-            }
-        );
+        return Vehiculo.find({});
     }
 
     post(body) {
@@ -25,47 +17,21 @@ module.exports = class VehiculoConsumer {
             color: body.color,
             modelYear: body.modelYear
         });
-        return new Promise(
-            function(resolve, reject) {
-                vehiculo.save((err, vehiculoSave) => {
-                    if (err)
-                        reject(err);
-                    resolve(vehiculoSave);
-                });
-            }
-        );
+        return vehiculo.save();
     }
 
     put(body, id) {
-        return new Promise(
-            function(resolve, reject) {
-                Vehiculo.findById(id, (err, vehiculo) => {
-                    if (err)
-                        reject(err);
-                    vehiculo.vehiculoId = body.vehiculoId;
-                    vehiculo.model = body.model;
-                    vehiculo.active = body.active;
-                    vehiculo.color = body.color;
-                    vehiculo.modelYear = body.modelYear;
-                    vehiculo.save((err, vehiculoSave) => {
-                        if (err)
-                            reject(err);
-                        resolve(vehiculoSave);
-                    });
-                });
-            }
-        );
+	return Vehiculo.findById(id).then(vehiculo => {
+	    vehiculo.vehiculoId = body.vehiculoId;
+	    vehiculo.model = body.model;
+	    vehiculo.active = body.active;
+	    vehiculo.color = body.color;
+	    vehiculo.modelYear = body.modelYear;
+            return vehiculo.save();
+        });
     }
 
     delete(id) {
-        return new Promise(
-            function(resolve, reject) {
-                Vehiculo.findByIdAndRemove(id, (err, vehiculoDelete) => {
-                    if (err)
-                        reject(err);
-                    resolve(vehiculoDelete);
-                });
-            }
-        );
+        return Vehiculo.findByIdAndRemove(id).exec();
     }
-}
+};
